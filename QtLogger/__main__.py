@@ -1,4 +1,9 @@
 from qtpy.QtWidgets import QWidget, QTextEdit
+import datetime
+import inspect
+
+LOG_LEVELS = {
+    "DEBUG": "blue",
 
 class QtLogger(QWidget):
     def __init__(self, parent=None, log_folder: str = None, font: QFont = None):
@@ -22,5 +27,10 @@ class QtLogger(QWidget):
 
         # Set the font
         self.logger_view.setFont(self.font)
+        # Date
+        self.date = datetime.now().strftime("%d-%m-%Y")
 
-
+    def log(self, message: str, level: str = "INFO"):
+        # Get the module name from the stack and store it in a variable
+        module_name = inspect.stack()[1][1].split("\\")[-1].split(".")[0]
+        time = datetime.now().strftime("%H:%M:%S")
