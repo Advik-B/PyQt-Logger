@@ -1,6 +1,7 @@
 from qtpy.QtWidgets import QWidget, QTextEdit
 import datetime
 import inspect
+import os
 
 # Hex codes for the colors of the log levels
 LOG_LEVELS = {
@@ -37,13 +38,33 @@ class QtLogger(QWidget):
         self.date = datetime.now().strftime("%d-%m-%Y")
         self.started = False
 
-    def start(self):
+    def prerequisites(self) -> None:
+        """
+        Check if the log folder exists, if it doesn't, create it, if it does, do nothing
+        """
+        if not self.log_folder:
+            return
+
+        # Check if the log folder exists
+        if not os.path.exists(self.log_folder):
+            # If it doesn't, create it
+            os.mkdir(self.log_folder)
+
+    def start(self) -> None:
+        if self.started:
+            return
+
+        if not self.log_folder:
+            self.started = True
+            return
+
         # Create a file with the date as the name
         self.log_file = open(f"{self.log_folder}/{self.date}.log", "a")
         # Write the date to the file
         self.log_file.write(f"Date: {self.date}\n")
         # Set started to True
         self.started = True
+
 
     def log(self, message: str, level: str = "INFO"):
         if not self.started:
@@ -62,5 +83,18 @@ class QtLogger(QWidget):
         log_message = f"[{level}]-[{time}]-[{module_name}]: {message}"
         # Add the log message to the logger view with the correct color
         self.logger_view.append(f"<font color={colour}>{log_message}</font>")
+        if not self.log_folder:
+            return
         # Write the log message to the log file
         self.log_file.write(f"{log_message}\n")
+
+    def stop(self):
+        if not self.started:
+            return
+        if not self.log_folder:
+            self.started = False
+            return
+
+        self.log_file.close()
+        self.started = False
+
