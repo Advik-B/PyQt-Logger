@@ -11,6 +11,7 @@ LOG_LEVELS = {
     "SUCCESS": "#388e3c"
 }
 
+
 class QtLogger(QWidget):
     def __init__(self, parent=None, log_folder: str = None, font: QFont = None, custom_colors: dict = None):
         super(QtLogger, self).__init__(parent)
@@ -30,7 +31,6 @@ class QtLogger(QWidget):
         # [WARNING]-[t  ime]-[module]: message <--- This one is yellow
         # [ERROR]-[time]-[module]: message <--- This one is red
         # [SUCCESS]-[time]-[module]: message <--- This one is green
-
 
         # Set the font
         self.logger_view.setFont(self.font)
