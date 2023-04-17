@@ -3,6 +3,7 @@ from qtpy.QtWidgets import QWidget, QTextEdit
 import datetime
 import inspect
 import os
+import zipfile
 
 # Hex codes for the colors of the log levels
 LOG_LEVELS = {
@@ -87,6 +88,52 @@ class QtLogger(QWidget):
             return
         # Write the log message to the log file
         self.log_file.write(f"{log_message}\n")
+
+    def beforestop(self):
+        # Archive the any logs that are older than 1 day
+        if not self.log_folder:
+            return
+
+        # Get all the files in the log folder
+        files = os.listdir(self.log_folder)
+        # Loop through the files
+        for file in files:
+            # Get the file's name and extension (only txt files are allowed)
+            name, extension = file.split(".")
+            # If the extension is not txt, skip the file
+            if extension != "txt":
+                continue
+            # Get the date of the file
+            file_date = datetime.strptime(name, "%d-%m-%Y")
+            # Get the date of today
+            today = datetime.now()
+            # Get the difference between the file date and today
+            difference = today - file_date
+            # If the difference is greater than 1 day, archive the file
+            if difference.days > 1:
+                # Create a zip file with the file's name
+                with zipfile.ZipFile(f"{self.log_folder}/{file}.zip", "w") as zip_file:
+                    # Add the file to the zip file
+                    zip_file.write(f"{self.log_folder}/{file}")
+                    # Delete the file
+                    os.remove(f"{self.log_folder}/{file}")
+
+
+    def clear(self):
+        self.logger_view.clear()
+        self.stop()
+        # Delete all the files in the log folder
+        for file in os.listdir(self.log_folder):
+            # Find the file's extension
+            extension = file.split(".")[-1]
+            # If the extension is not txt, skip the file
+            if extension != ["txt", "zip"]:
+                continue
+            # Delete the file
+            os.remove(f"{self.log_folder}/{file}")
+        self.start()
+
+
 
     def stop(self):
         if not self.started:
