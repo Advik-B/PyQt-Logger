@@ -1,5 +1,6 @@
 from PyQt6.QtGui import QFont
 from qtpy.QtWidgets import QWidget, QTextEdit
+from .execptions import LoggerNotStartedException
 import datetime
 import inspect
 import os
@@ -68,8 +69,9 @@ class QtLogger(QWidget):
         self.started = True
 
     def log(self, message: str, level: str = "INFO"):
+        # sourcery skip: raise-specific-error
         if not self.started:
-            raise Exception("You need to start the logger before you can log anything!")
+            raise LoggerNotStartedException("You need to start the logger before you can log anything!")
 
         # Get the module name from the stack and store it in a variable
         module_name = inspect.stack()[1][1].split("\\")[-1].split(".")[0]
