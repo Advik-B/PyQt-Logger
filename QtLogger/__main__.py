@@ -17,7 +17,7 @@ class QtLogger(QWidget):
         super(QtLogger, self).__init__(parent)
         self.log_folder = log_folder
         self.font = font
-        self.custom_colors = custom_colors or LOG_LEVELS
+        self.custom_colors = custom_colors or LOG_LEVELS # If custom_colors is None, use the default colors
         self._setup_ui()
 
     def _setup_ui(self):
