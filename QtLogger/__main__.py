@@ -17,7 +17,7 @@ class QtLogger(QWidget):
         super(QtLogger, self).__init__(parent)
         self.log_folder = log_folder
         self.font = font
-        self.custom_colors = custom_colors or LOG_LEVELS # If custom_colors is None, use the default colors
+        self.custom_colors = custom_colors or LOG_LEVELS  # If custom_colors is None, use the default colors
         self._setup_ui()
 
     def _setup_ui(self):
@@ -35,11 +35,20 @@ class QtLogger(QWidget):
         self.logger_view.setFont(self.font)
         # Date
         self.date = datetime.now().strftime("%d-%m-%Y")
+        self.started = False
 
     def start(self):
-
+        # Create a file with the date as the name
+        self.log_file = open(f"{self.log_folder}/{self.date}.log", "a")
+        # Write the date to the file
+        self.log_file.write(f"Date: {self.date}\n")
+        # Set started to True
+        self.started = True
 
     def log(self, message: str, level: str = "INFO"):
+        if not self.started:
+            raise Exception("You need to start the logger before you can log anything!")
+
         # Get the module name from the stack and store it in a variable
         module_name = inspect.stack()[1][1].split("\\")[-1].split(".")[0]
         time = datetime.now().strftime("%H:%M:%S")
@@ -47,9 +56,11 @@ class QtLogger(QWidget):
         if level not in LOG_LEVELS:
             level = "INFO"
         # If the level is in the custom_colors dict, use that color
-        colour = self.custom_colors[level] # We don't need to check if it's in the dict because we already checked that in the if statement above
+        colour = self.custom_colors[level]
+        # We don't need to check if it's in the dict because we already checked that in the if statement above
         # Create the log message
         log_message = f"[{level}]-[{time}]-[{module_name}]: {message}"
         # Add the log message to the logger view with the correct color
         self.logger_view.append(f"<font color={colour}>{log_message}</font>")
-
+        # Write the log message to the log file
+        self.log_file.write(f"{log_message}\n")
