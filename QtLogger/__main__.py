@@ -1,3 +1,4 @@
+from PyQt6.QtGui import QFont
 from qtpy.QtWidgets import QWidget, QTextEdit
 import datetime
 import inspect
