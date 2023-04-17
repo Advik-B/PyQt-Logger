@@ -65,7 +65,6 @@ class QtLogger(QWidget):
         # Set started to True
         self.started = True
 
-
     def log(self, message: str, level: str = "INFO"):
         if not self.started:
             raise Exception("You need to start the logger before you can log anything!")
@@ -97,4 +96,3 @@ class QtLogger(QWidget):
 
         self.log_file.close()
         self.started = False
-
