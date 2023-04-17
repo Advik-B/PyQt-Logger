@@ -118,7 +118,6 @@ class QtLogger(QWidget):
                     # Delete the file
                     os.remove(f"{self.log_folder}/{file}")
 
-
     def clear(self):
         self.logger_view.clear()
         self.stop()
@@ -132,8 +131,6 @@ class QtLogger(QWidget):
             # Delete the file
             os.remove(f"{self.log_folder}/{file}")
         self.start()
-
-
 
     def stop(self):
         if not self.started:
