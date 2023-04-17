@@ -92,7 +92,7 @@ class QtLogger(QWidget):
         self.log_file.write(f"{log_message}\n")
 
     def beforestop(self):
-        # Archive the any logs that are older than 1 day
+        # Archive any logs that are older than 1 day
         if not self.log_folder:
             return
 
