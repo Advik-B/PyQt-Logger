@@ -32,7 +32,7 @@ class MainWindow(QWidget):
 
         self.setLayout(self.lay)
         self.resize(800, 600)
-        
+
 
         self.show()
 
