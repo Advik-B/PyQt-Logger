@@ -30,6 +30,10 @@ class MainWindow(QWidget):
         self.success_btn.clicked.connect(self.success)
         self.lay.addWidget(self.success_btn, 1, 5)
 
+        self.setLayout(self.lay)
+        self.resize(800, 600)
+        
+
         self.show()
 
     def closeEvent(self, event):
@@ -51,7 +55,7 @@ class MainWindow(QWidget):
     def success(self):
         self.logger.success(self.line.text())
 
-    
+
 
 
 if __name__ == "__main__":
