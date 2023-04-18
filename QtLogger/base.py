@@ -20,6 +20,7 @@ class QtLogger(QWidget):
     def __init__(self, parent=None, log_folder: str = None, font: QFont = None, custom_colors: dict = None):
         if parent:
             super().__init__(parent)
+            self.resize(parent.size())
         else:
             super().__init__()
 
@@ -27,7 +28,8 @@ class QtLogger(QWidget):
         self.font = font
         self.custom_colors = custom_colors or LOG_LEVELS  # If custom_colors is None, use the default colors
         self._setup_ui()
-
+        # Enable resizing of the widget
+        # self.setFixedSize(self.sizeHint())
         self.show()
 
     def _setup_ui(self):
@@ -42,7 +44,7 @@ class QtLogger(QWidget):
         # [ERROR]-[time]-[module]: message <--- This one is red
         # [SUCCESS]-[time]-[module]: message <--- This one is green
         # Set the font
-        self.logger_view.setFont(self.font)
+        self.logger_view.setFont(self.font or QFont("Monospace", 10))
         # Date
         self.date = datetime.now().strftime("%d-%m-%Y")
         self.started = False
