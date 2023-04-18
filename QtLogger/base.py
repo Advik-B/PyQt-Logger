@@ -60,15 +60,16 @@ class QtLogger(QWidget):
         if not self.log_folder:
             self.started = True
             return
-        
+
         self.prerequisites()
         # Create a file with the date as the name
         if not os.path.exists(f"{self.log_folder}/{self.date}.log"):
             self.log_file = open(f"{self.log_folder}/{self.date}.log", "w")
+            # Write the date to the file
+            self.log_file.write(f"Date: {self.date}\n")
+
         else:
             self.log_file = open(f"{self.log_folder}/{self.date}.log", "a")
-        # Write the date to the file
-        self.log_file.write(f"Date: {self.date}\n")
         # Set started to True
         self.started = True
 
