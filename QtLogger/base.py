@@ -1,6 +1,6 @@
 from PyQt6.QtGui import QFont
-from qtpy.QtWidgets import QWidget, QTextEdit
-from .execptions import LoggerNotStartedException
+from qtpy.QtWidgets import QWidget, QTextEdit, QGridLayout
+from .exceptions import LoggerNotStartedException
 import inspect
 import os
 import zipfile
@@ -28,11 +28,12 @@ class QtLogger(QWidget):
         self.font = font
         self.custom_colors = custom_colors or LOG_LEVELS  # If custom_colors is None, use the default colors
         self._setup_ui()
+
         # Enable resizing of the widget
         # self.setFixedSize(self.sizeHint())
-        self.show()
 
     def _setup_ui(self):
+        self.lay = QGridLayout(self)
         self.logger_view = QTextEdit(self)
         self.logger_view.setReadOnly(True)
         self.logger_view.setLineWrapMode(QTextEdit.NoWrap)
@@ -45,8 +46,10 @@ class QtLogger(QWidget):
         # [SUCCESS]-[time]-[module]: message <--- This one is green
         # Set the font
         self.logger_view.setFont(self.font or QFont("Monospace", 10))
+        self.lay.addWidget(self.logger_view, 0, 0, 1, 1)
         # Date
         self.date = datetime.now().strftime("%d-%m-%Y")
+
         self.started = False
 
     def prerequisites(self) -> None:
@@ -60,6 +63,29 @@ class QtLogger(QWidget):
         if not os.path.exists(self.log_folder):
             # If it doesn't, create it
             os.mkdir(self.log_folder)
+
+        # Load the previous logs
+        self.load_previous_logs()
+
+    def load_previous_logs(self) -> None:
+        with open(f"{self.log_folder}/{self.date}.log", "r") as f:
+            for line in f:
+                if line.startswith("Date:"):
+                    continue
+                # Get the level
+                level = line.split("-")[0].replace("[", "").replace("]", "")
+                # Get the time
+                time = line.split("-")[1].replace("]", "").replace("[", "")
+                # Get the module
+                module = line.split("-")[2].replace("(", "")
+                module = module.replace(")", "")
+                # Get the message
+                message = line.split(":")[1].replace(" ", "")
+                # Log the message
+                colour = self.custom_colors[level]
+                self.logger_view.append(f"<font color={colour}>[{level}]-[{time}]-[{module}]: {message}</font>")
+
+
 
     def start(self) -> None:
         if self.started:
