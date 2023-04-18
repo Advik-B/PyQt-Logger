@@ -1,10 +1,10 @@
 from PyQt6.QtGui import QFont
 from qtpy.QtWidgets import QWidget, QTextEdit
 from .execptions import LoggerNotStartedException
-import datetime
 import inspect
 import os
 import zipfile
+from datetime import datetime
 
 # Hex codes for the colors of the log levels
 LOG_LEVELS = {
@@ -27,7 +27,7 @@ class QtLogger(QWidget):
     def _setup_ui(self):
         self.logger_view = QTextEdit(self)
         self.logger_view.setReadOnly(True)
-        self.logger_view.setLineWrapMode(QTextEdit.NoWarp)
+        self.logger_view.setLineWrapMode(QTextEdit.NoWrap)
 
         # Highlight things like these
         # [DEBUG]-[time]-[module]: message <--- This one is purple
@@ -60,9 +60,13 @@ class QtLogger(QWidget):
         if not self.log_folder:
             self.started = True
             return
-
+        
+        self.prerequisites()
         # Create a file with the date as the name
-        self.log_file = open(f"{self.log_folder}/{self.date}.log", "a")
+        if not os.path.exists(f"{self.log_folder}/{self.date}.log"):
+            self.log_file = open(f"{self.log_folder}/{self.date}.log", "w")
+        else:
+            self.log_file = open(f"{self.log_folder}/{self.date}.log", "a")
         # Write the date to the file
         self.log_file.write(f"Date: {self.date}\n")
         # Set started to True
