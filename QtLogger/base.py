@@ -22,7 +22,7 @@ class QtLogger(QWidget):
             super().__init__(parent)
         else:
             super().__init__()
-        
+
         self.log_folder = log_folder
         self.font = font
         self.custom_colors = custom_colors or LOG_LEVELS  # If custom_colors is None, use the default colors
@@ -83,8 +83,9 @@ class QtLogger(QWidget):
         if not self.started:
             raise LoggerNotStartedException("You need to start the logger before you can log anything!")
 
-        # Get the module name from the stack and store it in a variable
-        module_name = inspect.stack()[1][1].split("\\")[-1].split(".")[0]
+        # Get the name of the module that called the log function
+        module_name = inspect.stack()[1].function
+        # Get the current time
         time = datetime.now().strftime("%H:%M:%S")
         # If the level is not in the LOG_LEVELS dict, set it to INFO
         if level not in LOG_LEVELS:
