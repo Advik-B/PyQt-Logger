@@ -69,7 +69,6 @@ class QtLogger(QWidget):
         self.started = True
 
     def log(self, message: str, level: str = "INFO"):
-        # sourcery skip: raise-specific-error
         if not self.started:
             raise LoggerNotStartedException("You need to start the logger before you can log anything!")
 
@@ -90,6 +89,27 @@ class QtLogger(QWidget):
             return
         # Write the log message to the log file
         self.log_file.write(f"{log_message}\n")
+
+    def debug(self, message: str):
+        """Alias for log(message, "DEBUG")"""
+        self.log(message, "DEBUG")
+
+    def info(self, message: str):
+        """Alias for log(message, "INFO")"""
+        self.log(message, "INFO")
+
+    def warning(self, message: str):
+        """Alias for log(message, "WARNING")"""
+        self.log(message, "WARNING")
+
+    def error(self, message: str):
+        """Alias for log(message, "ERROR")"""
+        self.log(message, "ERROR")
+
+    def success(self, message: str):
+        """Alias for log(message, "SUCCESS")"""
+        self.log(message, "SUCCESS")
+
 
     def beforestop(self):
         # Archive any logs that are older than 1 day
