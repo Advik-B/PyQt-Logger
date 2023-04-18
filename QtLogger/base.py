@@ -81,12 +81,14 @@ class QtLogger(QWidget):
         # Set started to True
         self.started = True
 
-    def log(self, message: str, level: str = "INFO"):
+    def log(self, message: str, level: str = "INFO", module: str = None):
         if not self.started:
             raise LoggerNotStartedException("You need to start the logger before you can log anything!")
 
         # Get the name of the module that called the log function
-        module_name = inspect.stack()[1].function
+        if not module:
+            module = inspect.stack()[1].function
+
         # Get the current time
         time = datetime.now().strftime("%H:%M:%S")
         # If the level is not in the LOG_LEVELS dict, set it to INFO
@@ -96,7 +98,7 @@ class QtLogger(QWidget):
         colour = self.custom_colors[level]
         # We don't need to check if it's in the dict because we already checked that in the if statement above
         # Create the log message
-        log_message = f"[{level}]-[{time}]-[{module_name}]: {message}"
+        log_message = f"[{level}]-[{time}]-[{module}]: {message}"
         # Add the log message to the logger view with the correct color
         self.logger_view.append(f"<font color={colour}>{log_message}</font>")
         if not self.log_folder:
@@ -104,25 +106,30 @@ class QtLogger(QWidget):
         # Write the log message to the log file
         self.log_file.write(f"{log_message}\n")
 
-    def debug(self, message: str):
+    def debug(self, message: str, module: str = None):
         """Alias for log(message, "DEBUG")"""
-        self.log(message, "DEBUG")
+        module_name = module if module else inspect.stack()[1].function
+        self.log(message, "DEBUG", module_name)
 
-    def info(self, message: str):
+    def info(self, message: str, m: str = None):
         """Alias for log(message, "INFO")"""
-        self.log(message, "INFO")
+        module_name = m if m else inspect.stack()[1].function
+        self.log(message, "INFO", module_name)
 
-    def warning(self, message: str):
+    def warning(self, message: str, m: str = None):
         """Alias for log(message, "WARNING")"""
-        self.log(message, "WARNING")
+        module_name = m if m else inspect.stack()[1].function
+        self.log(message, "WARNING", module_name)
 
-    def error(self, message: str):
+    def error(self, message: str, m: str = None):
         """Alias for log(message, "ERROR")"""
-        self.log(message, "ERROR")
+        module_name = m if m else inspect.stack()[1].function
+        self.log(message, "ERROR", module_name)
 
-    def success(self, message: str):
+    def success(self, message: str, m: str = None):
         """Alias for log(message, "SUCCESS")"""
-        self.log(message, "SUCCESS")
+        module_name = m if m else inspect.stack()[1].function
+        self.log(message, "SUCCESS", module_name)
 
 
     def beforestop(self):
