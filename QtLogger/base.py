@@ -1,10 +1,12 @@
 from PyQt6.QtGui import QFont
 from qtpy.QtWidgets import QWidget, QTextEdit, QGridLayout
 from .exceptions import LoggerNotStartedException
+from .warnings import DidNotCloseLoggerWarning
 import inspect
 import os
 import zipfile
 from datetime import datetime
+from warnings import warn
 
 # Hex codes for the colors of the log levels
 LOG_LEVELS = {
@@ -17,7 +19,14 @@ LOG_LEVELS = {
 
 
 class QtLogger(QWidget):
-    def __init__(self, parent=None, log_folder: str = None, font: QFont = None, custom_colors: dict = None):
+    def __init__(
+            self,
+            parent=None,
+            log_folder: str = None,
+            font: QFont = None,
+            custom_colors: dict = None,
+            load_previous_logs: bool = True,
+    ):
         if parent:
             super().__init__(parent)
             self.resize(parent.size())
@@ -27,10 +36,9 @@ class QtLogger(QWidget):
         self.log_folder = log_folder
         self.font = font
         self.custom_colors = custom_colors or LOG_LEVELS  # If custom_colors is None, use the default colors
+        self.load_previous_logs = load_previous_logs
         self._setup_ui()
 
-        # Enable resizing of the widget
-        # self.setFixedSize(self.sizeHint())
 
     def _setup_ui(self):
         self.lay = QGridLayout(self)
@@ -66,15 +74,38 @@ class QtLogger(QWidget):
 
         self.date = datetime.now().strftime("%d-%m-%Y")
         # Check if the log file exists
-        if not os.path.exists(f"{self.log_folder}/{date}.log"):
+        if not os.path.exists(f"{self.log_folder}/{self.date}.log"):
             # If it doesn't, create it
-            with open(f"{self.log_folder}/{date}.log", "w") as f:
-                f.write(f"Date: {date}\n")
+            with open(f"{self.log_folder}/{self.date}.log", "w") as f:
+                f.write(f"Date: {self.date}\n")
 
         # Load the previous logs
-        self.load_previous_logs()
+        if self.load_previous_logs:
+            self.load_logs()
 
-    def load_previous_logs(self) -> None:
+    def load_logs(self) -> None:
+
+        with open(f"{self.log_folder}/{self.date}.log", "r") as f:
+            for line in f:
+                # Skip the date line
+                if line.startswith("Date:"):
+                    continue
+
+                # Sample log
+                # [WARNING]-[12:38:28]-(backend): Hello
+                level = line.split("-")[0].strip("[]")
+                time = line.split("-")[1].strip("[]")
+                module = line.split("-")[2].split(":")[0].strip("()")
+                message = line.split("-")[2].split(":")[1].strip()
+
+                # If the level is in the custom_colors dict, use that color
+                level = level.upper()
+                color = self.custom_colors[level]
+                self.logger_view.append(f"<font color={color}>[{level}]-[{time}]-({module}): {message}</font>")
+
+
+
+
 
 
 
@@ -92,19 +123,6 @@ class QtLogger(QWidget):
         # Set started to True
         self.started = True
 
-    def load_logs(self) -> None:
-        if not self.log_folder:
-            return
-
-        with open(f"{self.log_folder}/{self.date}.log", "r") as f:
-            for line in f:
-                level = line.split("-")[0].replace("[", "").replace("]", "")
-                colour = self.custom_colors[level]
-                time = line.split("-")[1].replace("[", "").replace("]", "")
-                module = line.split("-")[2].replace("(", "").replace(")", "")
-                message = line.split(":")[1].strip()
-                log_message = f"[{level}]-[{time}]-({module}): {message}"
-                self.logger_view.append(f"<font color={colour}>{log_message}</font>")
 
 
     def log(self, message: str, level: str = "INFO", module: str = None):
@@ -158,7 +176,6 @@ class QtLogger(QWidget):
         module_name = m or inspect.stack()[1].function
         self.log(message, "SUCCESS", module_name)
 
-
     def beforestop(self):
         # Archive any logs that are older than 1 day
         if not self.log_folder:
@@ -209,5 +226,13 @@ class QtLogger(QWidget):
             self.started = False
             return
 
+        self.beforestop()
         self.log_file.close()
         self.started = False
+
+    # Destructor
+    def __del__(self):
+        if not self.started:
+            return
+        self.stop()
+        warn("You forgot to close the PyQtLogger before quitting SMH", DidNotCloseLoggerWarning)
