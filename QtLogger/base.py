@@ -115,8 +115,8 @@ class QtLogger(QWidget):
 
                 # If the level is in the custom_colors dict, use that color
                 level = level.upper()
-                color = self.custom_colors[level]
                 if level in self.display_levels:
+                    color = self.custom_colors[level]
                     self.logger_view.append(f"<font color={color}>[{level}]-[{time}]-({module}): {message}</font>")
 
     def changeDisplayLevel(self, level: str):
