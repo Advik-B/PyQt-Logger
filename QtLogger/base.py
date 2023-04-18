@@ -26,6 +26,7 @@ class QtLogger(QWidget):
             font: QFont = None,
             custom_colors: dict = None,
             load_previous_logs: bool = True,
+            display_level: str = "ALL"
     ):
         if parent:
             super().__init__(parent)
@@ -37,6 +38,20 @@ class QtLogger(QWidget):
         self.font = font
         self.custom_colors = custom_colors or LOG_LEVELS  # If custom_colors is None, use the default colors
         self.load_previous_logs = load_previous_logs
+
+        if isinstance(display_level, str):
+            display_levels = [display_level.upper()]
+        elif isinstance(display_level, list):
+            display_levels = display_level
+
+        for level in display_levels:
+            if level not in LOG_LEVELS and level != "ALL":
+                raise ValueError(f"Invalid display level: {level}\n" f"Valid display levels: {', '.join(LOG_LEVELS.keys())}")
+
+        if "ALL" in display_levels:
+            display_levels = list(LOG_LEVELS.keys())
+        self.display_levels = display_levels
+
         self._setup_ui()
 
 
@@ -101,13 +116,17 @@ class QtLogger(QWidget):
                 # If the level is in the custom_colors dict, use that color
                 level = level.upper()
                 color = self.custom_colors[level]
-                self.logger_view.append(f"<font color={color}>[{level}]-[{time}]-({module}): {message}</font>")
+                if level in self.display_levels:
+                    self.logger_view.append(f"<font color={color}>[{level}]-[{time}]-({module}): {message}</font>")
 
+    def changeDisplayLevel(self, level: str):
+        level = level.upper()
+        if level not in LOG_LEVELS:
+            level = "INFO"
 
-
-
-
-
+        self.logger_view.clear()
+        self.load_logs()
+        self.logger_view.append(f"Displaying logs with level {level} and above")
 
     def start(self) -> None:
         if self.started:
@@ -145,7 +164,8 @@ class QtLogger(QWidget):
         # Create the log message
         log_message = f"[{level}]-[{time}]-({module}): {message}"
         # Add the log message to the logger view with the correct color
-        self.logger_view.append(f"<font color={colour}>{log_message}</font>")
+        if level in self.display_levels:
+            self.logger_view.append(f"<font color={colour}>{log_message}</font>")
         if not self.log_folder:
             return
         # Write the log message to the log file
