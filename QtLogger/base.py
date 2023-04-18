@@ -18,11 +18,17 @@ LOG_LEVELS = {
 
 class QtLogger(QWidget):
     def __init__(self, parent=None, log_folder: str = None, font: QFont = None, custom_colors: dict = None):
-        super(QtLogger, self).__init__(parent)
+        if parent:
+            super().__init__(parent)
+        else:
+            super().__init__()
+        
         self.log_folder = log_folder
         self.font = font
         self.custom_colors = custom_colors or LOG_LEVELS  # If custom_colors is None, use the default colors
         self._setup_ui()
+
+        self.show()
 
     def _setup_ui(self):
         self.logger_view = QTextEdit(self)
