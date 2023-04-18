@@ -25,8 +25,8 @@ class QtLogger(QWidget):
             log_folder: str = None,
             font: QFont = None,
             custom_colors: dict = None,
-            load_previous_logs: bool = True,
-            display_level: str = "ALL"
+            load_previous_logs: bool = False,
+            display_level: str = "all",
     ):
         if parent:
             super().__init__(parent)
