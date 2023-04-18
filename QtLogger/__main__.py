@@ -15,7 +15,9 @@ class MainWindow(QWidget):
         self.line = QLineEdit(self)
         self.lay.addWidget(self.line, 1, 0)
         self.info_btn = QPushButton("Info", self)
-        self.info_btn.clicked.connect(self.info)
+
+
+        self.info_btn.clicked.connect(self.infoa)
         self.lay.addWidget(self.info_btn, 1, 1)
         self.debug_btn = QPushButton("Debug", self)
         self.debug_btn.clicked.connect(self.debug)
@@ -43,7 +45,7 @@ class MainWindow(QWidget):
         self.logger.stop()
         super().closeEvent(event)
 
-    def info(self):
+    def infoa(self):
         self.logger.info(self.line.text())
 
     def debug(self):
