@@ -98,7 +98,7 @@ class QtLogger(QWidget):
         colour = self.custom_colors[level]
         # We don't need to check if it's in the dict because we already checked that in the if statement above
         # Create the log message
-        log_message = f"[{level}]-[{time}]-[{module}]: {message}"
+        log_message = f"[{level}]-[{time}]-({module}): {message}"
         # Add the log message to the logger view with the correct color
         self.logger_view.append(f"<font color={colour}>{log_message}</font>")
         if not self.log_folder:
