@@ -31,12 +31,6 @@ class MainWindow(QWidget):
         self.success_btn = QPushButton("Success", self)
         self.success_btn.clicked.connect(self.success)
 
-        self.success_btn.setStyleSheet("background-color: green")
-        self.error_btn.setStyleSheet("background-color: red")
-        self.warning_btn.setStyleSheet("background-color: yellow")
-        self.debug_btn.setStyleSheet("background-color: purple")
-        self.info_btn.setStyleSheet("background-color: blue")
-
         self.module = QLineEdit(self)
         self.lay.addWidget(self.module, 1, 6)
 
