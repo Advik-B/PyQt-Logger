@@ -7,6 +7,7 @@ import os
 import zipfile
 from datetime import datetime
 from warnings import warn
+from typing import Union
 
 # Hex codes for the colors of the log levels
 LOG_LEVELS = {
@@ -26,7 +27,7 @@ class QtLogger(QWidget):
             font: QFont = None,
             custom_colors: dict = None,
             load_previous_logs: bool = False,
-            display_level: str = "all",
+            display_level: Union[str, list, tuple] = "all",
     ):
         if parent:
             super().__init__(parent)
@@ -41,8 +42,8 @@ class QtLogger(QWidget):
 
         if isinstance(display_level, str):
             display_levels = [display_level.upper()]
-        elif isinstance(display_level, list):
-            display_levels = display_level
+        elif isinstance(display_level, list) or isinstance(display_level, tuple):
+            display_levels = [level.upper() for level in display_level]
 
         for level in display_levels:
             if level not in LOG_LEVELS and level != "ALL":
@@ -240,7 +241,7 @@ class QtLogger(QWidget):
         self.start()
 
     def stop(self):
-        if not self.started:
+        if self.started:
             return
         if not self.log_folder:
             self.started = False
@@ -252,7 +253,9 @@ class QtLogger(QWidget):
 
     # Destructor
     def __del__(self):
-        if not self.started:
-            return
-        self.stop()
+        try:
+            if not self.started:
+                return
+        except RuntimeError:
+            pass
         warn("You forgot to close the PyQtLogger before quitting SMH", DidNotCloseLoggerWarning)
