@@ -13,6 +13,7 @@ class MainWindow(QWidget):
             log_folder="logs",
             font=QFont("JetBrains Mono", 10),
             load_previous_logs=True,
+            display_level=["info", "error"]
         )
         self.logger.start()
         # Add the logger widget but It can take up the entire colspan
