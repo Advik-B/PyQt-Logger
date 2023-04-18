@@ -17,7 +17,7 @@ class MainWindow(QWidget):
         self.info_btn = QPushButton("Info", self)
 
 
-        self.info_btn.clicked.connect(self.infoa)
+        self.info_btn.clicked.connect(self.info)
         self.lay.addWidget(self.info_btn, 1, 1)
         self.debug_btn = QPushButton("Debug", self)
         self.debug_btn.clicked.connect(self.debug)
@@ -30,6 +30,16 @@ class MainWindow(QWidget):
         self.lay.addWidget(self.error_btn, 1, 4)
         self.success_btn = QPushButton("Success", self)
         self.success_btn.clicked.connect(self.success)
+
+        self.success_btn.setStyleSheet("background-color: green")
+        self.error_btn.setStyleSheet("background-color: red")
+        self.warning_btn.setStyleSheet("background-color: yellow")
+        self.debug_btn.setStyleSheet("background-color: purple")
+        self.info_btn.setStyleSheet("background-color: blue")
+
+        self.module = QLineEdit(self)
+        self.lay.addWidget(self.module, 1, 6)
+
         self.lay.addWidget(self.success_btn, 1, 5)
 
         self.setWindowTitle("QtLogger")
@@ -45,20 +55,20 @@ class MainWindow(QWidget):
         self.logger.stop()
         super().closeEvent(event)
 
-    def infoa(self):
-        self.logger.info(self.line.text())
+    def info(self):
+        self.logger.info(self.line.text(), self.module.text() or None)
 
     def debug(self):
-        self.logger.debug(self.line.text())
+        self.logger.debug(self.line.text(), self.module.text() or None)
 
     def warning(self):
-        self.logger.warning(self.line.text())
+        self.logger.warning(self.line.text(), self.module.text() or None)
 
     def error(self):
-        self.logger.error(self.line.text())
+        self.logger.error(self.line.text(), self.module.text() or None)
 
     def success(self):
-        self.logger.success(self.line.text())
+        self.logger.success(self.line.text(), self.module.text() or None)
 
 
 
