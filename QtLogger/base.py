@@ -64,26 +64,17 @@ class QtLogger(QWidget):
             # If it doesn't, create it
             os.mkdir(self.log_folder)
 
+        self.date = datetime.now().strftime("%d-%m-%Y")
+        # Check if the log file exists
+        if not os.path.exists(f"{self.log_folder}/{date}.log"):
+            # If it doesn't, create it
+            with open(f"{self.log_folder}/{date}.log", "w") as f:
+                f.write(f"Date: {date}\n")
+
         # Load the previous logs
         self.load_previous_logs()
 
     def load_previous_logs(self) -> None:
-        with open(f"{self.log_folder}/{self.date}.log", "r") as f:
-            for line in f:
-                if line.startswith("Date:"):
-                    continue
-                # Get the level
-                level = line.split("-")[0].replace("[", "").replace("]", "")
-                # Get the time
-                time = line.split("-")[1].replace("]", "").replace("[", "")
-                # Get the module
-                module = line.split("-")[2].replace("(", "")
-                module = module.replace(")", "")
-                # Get the message
-                message = line.split(":")[1].replace(" ", "")
-                # Log the message
-                colour = self.custom_colors[level]
-                self.logger_view.append(f"<font color={colour}>[{level}]-[{time}]-[{module}]: {message}</font>")
 
 
 
@@ -96,16 +87,25 @@ class QtLogger(QWidget):
             return
 
         self.prerequisites()
-        # Create a file with the date as the name
-        if not os.path.exists(f"{self.log_folder}/{self.date}.log"):
-            self.log_file = open(f"{self.log_folder}/{self.date}.log", "w")
-            # Write the date to the file
-            self.log_file.write(f"Date: {self.date}\n")
 
-        else:
-            self.log_file = open(f"{self.log_folder}/{self.date}.log", "a")
+        self.log_file = open(f"{self.log_folder}/{self.date}.log", "a")
         # Set started to True
         self.started = True
+
+    def load_logs(self) -> None:
+        if not self.log_folder:
+            return
+
+        with open(f"{self.log_folder}/{self.date}.log", "r") as f:
+            for line in f:
+                level = line.split("-")[0].replace("[", "").replace("]", "")
+                colour = self.custom_colors[level]
+                time = line.split("-")[1].replace("[", "").replace("]", "")
+                module = line.split("-")[2].replace("(", "").replace(")", "")
+                message = line.split(":")[1].strip()
+                log_message = f"[{level}]-[{time}]-({module}): {message}"
+                self.logger_view.append(f"<font color={colour}>{log_message}</font>")
+
 
     def log(self, message: str, level: str = "INFO", module: str = None):
         if not self.started:
@@ -117,6 +117,7 @@ class QtLogger(QWidget):
 
         # Get the current time
         time = datetime.now().strftime("%H:%M:%S")
+        level = level.upper()
         # If the level is not in the LOG_LEVELS dict, set it to INFO
         if level not in LOG_LEVELS:
             level = "INFO"
@@ -134,27 +135,27 @@ class QtLogger(QWidget):
 
     def debug(self, message: str, module: str = None):
         """Alias for log(message, "DEBUG")"""
-        module_name = module if module else inspect.stack()[1].function
+        module_name = module or inspect.stack()[1].function
         self.log(message, "DEBUG", module_name)
 
     def info(self, message: str, m: str = None):
         """Alias for log(message, "INFO")"""
-        module_name = m if m else inspect.stack()[1].function
+        module_name = m or inspect.stack()[1].function
         self.log(message, "INFO", module_name)
 
     def warning(self, message: str, m: str = None):
         """Alias for log(message, "WARNING")"""
-        module_name = m if m else inspect.stack()[1].function
+        module_name = m or inspect.stack()[1].function
         self.log(message, "WARNING", module_name)
 
     def error(self, message: str, m: str = None):
         """Alias for log(message, "ERROR")"""
-        module_name = m if m else inspect.stack()[1].function
+        module_name = m or inspect.stack()[1].function
         self.log(message, "ERROR", module_name)
 
     def success(self, message: str, m: str = None):
         """Alias for log(message, "SUCCESS")"""
-        module_name = m if m else inspect.stack()[1].function
+        module_name = m or inspect.stack()[1].function
         self.log(message, "SUCCESS", module_name)
 
 
