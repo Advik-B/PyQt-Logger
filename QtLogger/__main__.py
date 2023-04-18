@@ -8,7 +8,12 @@ class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
         self.lay = QGridLayout(self)
-        self.logger = QtLogger(parent=self, log_folder="logs", font=QFont("JetBrains Mono", 10))
+        self.logger = QtLogger(
+            parent=self,
+            log_folder="logs",
+            font=QFont("JetBrains Mono", 10),
+            load_previous_logs=True,
+        )
         self.logger.start()
         # Add the logger widget but It can take up the entire colspan
         self.lay.addWidget(self.logger, 0, 0, 1, 6)
