@@ -1,5 +1,5 @@
 from PyQt6.QtGui import QFont
-from qtpy.QtWidgets import QWidget, QTextEdit, QGridLayout
+from PyQt6.QtWidgets import QWidget, QTextEdit, QGridLayout
 from .exceptions import LoggerNotStartedException
 from .warnings import DidNotCloseLoggerWarning
 import inspect
