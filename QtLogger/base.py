@@ -37,14 +37,14 @@ class QtLogger(QWidget):
         else:
             super().__init__()
 
-        self.log_folder = log_folder
-        self.font = font
+        self.log_folder = log_folder or "logs"
+        self.font = font or QFont("Monospace", 10)
         self.custom_colors = custom_colors or LOG_LEVELS  # If custom_colors is None, use the default colors
-        self.load_previous_logs = load_previous_logs
+        self.load_previous_logs = load_previous_logs or False
 
         if isinstance(display_level, str):
             display_levels = [display_level.upper()]
-        elif isinstance(display_level, list) or isinstance(display_level, tuple):
+        elif isinstance(display_level, (list, tuple)):
             display_levels = [level.upper() for level in display_level]
 
         for level in display_levels:
