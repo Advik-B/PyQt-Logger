@@ -18,6 +18,8 @@ LOG_LEVELS = {
     "SUCCESS": "#388e3c"
 }
 
+LOG_FILE_TYPES = ["txt", "zip"]
+
 
 class QtLogger(QWidget):
     def __init__(
@@ -234,7 +236,7 @@ class QtLogger(QWidget):
             # Find the file's extension
             extension = file.split(".")[-1]
             # If the extension is not txt, skip the file
-            if extension != ["txt", "zip"]:
+            if extension != LOG_FILE_TYPES:
                 continue
             # Delete the file
             os.remove(f"{self.log_folder}/{file}")
