@@ -37,7 +37,7 @@ class QtLogger(QWidget):
         else:
             super().__init__()
 
-        self.log_folder = log_folder or "logs"
+        self.log_folder = log_folder
         self.font = font or QFont("Monospace", 10)
         self.custom_colors = custom_colors or LOG_LEVELS  # If custom_colors is None, use the default colors
         self.load_previous_logs = load_previous_logs or False
