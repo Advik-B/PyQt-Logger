@@ -9,3 +9,6 @@ A small widget to show some logs with basic syntax
 - Auto archive the logs
 - Ability to read and display older logs
 
+## Installation
+
+PyQt-Logger requires [PyQt6](https://pypi.org/project/PyQt6/) to run.
