@@ -12,7 +12,7 @@ A small widget to show some logs with basic syntax
 ## Installation
 
 ```bash
-pip install PyQt-Logger
+pip install QtLogger
 ```
 
 ## Usage
