@@ -11,4 +11,46 @@ A small widget to show some logs with basic syntax
 
 ## Installation
 
-PyQt-Logger requires [PyQt6](https://pypi.org/project/PyQt6/) to run.
+```bash
+pip install PyQt-Logger
+```
+
+## Usage
+
+> Importing
+```python
+from QtLogger import QtLogger
+```
+
+> Full usage example
+```python
+from QtLogger import QtLogger
+from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout, QWidget
+
+class MainWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("QtLogger Example")
+        self.resize(500, 500)
+
+        self.central_widget = QWidget()
+        self.setCentralWidget(self.central_widget)
+
+        self.layout = QVBoxLayout()
+        self.central_widget.setLayout(self.layout)
+
+        self.button = QPushButton("Log something")
+        self.button.clicked.connect(self.log_something)
+        self.layout.addWidget(self.button)
+
+        self.logger = QtLogger()
+        self.layout.addWidget(self.logger)
+
+    def log_something(self):
+        self.logger.log("This is a log", "info")
+
+app = QApplication([])
+window = MainWindow()
+window.show()
+app.exec()
+```
