@@ -62,7 +62,7 @@ class QtLogger(QWidget):
         self.lay = QGridLayout(self)
         self.logger_view = QTextEdit(self)
         self.logger_view.setReadOnly(True)
-        self.logger_view.setLineWrapMode(QTextEdit.NoWrap)
+        self.logger_view.setLineWrapMode(QTextEdit.LineWrapMode.NoWrap)
 
         # Highlight things like these
         # [DEBUG]-[time]-[module]: message <--- This one is purple
